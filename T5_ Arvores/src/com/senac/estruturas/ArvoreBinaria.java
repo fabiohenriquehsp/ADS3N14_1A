@@ -1,56 +1,105 @@
 package com.senac.estruturas;
 
 public class ArvoreBinaria<T extends Comparable<T>>
-			implements Comparable<ArvoreBinaria<T>>
 
 {
 
-	public void insert(Nodo<T> novo, T valor) {
-
-		T val = novo.getValor();
-		Nodo<T> direita = novo.getDireita();
-		Nodo<T> esquerda = novo.getDireita();
-		
-		int num = val.compareTo(val);
-		int v = valor.compareTo(valor);
+	private Nodo<T> raiz;
+	private int cmp = 0;
 	
-		if (v > num) {
-			if (novo.getEsquerda() != null) {
-				novo.setEsquerda((Nodo<T>) valor);
-			} else {
-				novo.setEsquerda((Nodo<T>) valor);
-			}
-
-		} else if (valor == novo.getValor()) {
-			if (novo.getDireita() != null) {
-				novo.setDireita((Nodo<T>) valor);
-			} else {
-				novo.setDireita((Nodo<T>) valor);
-			}
-		}
-
+	public ArvoreBinaria()
+	{
+		this.raiz = null;
 	}
+	
+	public void insert(Nodo<T> novo) {
 
-	public Nodo<T> remove(Nodo<T> nodo) {
-		if (nodo == null) {
-			return null;
-		} else if (nodo.getEsquerda() != null) {
-			nodo.setEsquerda(remove(nodo.getEsquerda()));
-			return nodo;
+		if (this.raiz == null) {
+			this.raiz = novo;
 		} else {
-			return nodo.getDireita();
+			if (novo.compareTo(raiz) == 0) {
+				this.raiz = novo;
+			} else {
+				this.insertNodo(raiz, novo);
+			}
 		}
 
 	}
 
-	@Override
-	public int compareTo(ArvoreBinaria<T> o) {
-		// TODO Auto-generated method stub
-		return 0;
+	private void insertNodo(Nodo<T> nodoPrincipal, Nodo<T> nodoInserir) {
+		int result = nodoPrincipal.compareTo(nodoInserir);
+		if (result < 0) {
+			this.insereEsquerda(nodoPrincipal, nodoInserir);
+		} else if (result > 0) {
+			this.insereDireita(nodoPrincipal, nodoInserir);
+		} else {
+			nodoPrincipal.setValor(nodoInserir.getValor());
+			this.insereDireita(nodoPrincipal, nodoInserir);
+		}
+	}
+	
+	private void insereEsquerda(Nodo<T> nodoPrincipal, Nodo<T> nodoInserir) {
+		if (nodoPrincipal.getEsquerda() != null) {
+			this.insertNodo(nodoPrincipal.getEsquerda(), nodoInserir);
+		} else {
+			nodoPrincipal.setEsquerda(nodoInserir);
+		}
 	}
 
+	private void insereDireita(Nodo<T> nodoPai, Nodo<T> nodoInserir) {
+		if (nodoPai.getDireita() != null) {
+			this.insertNodo(nodoPai.getDireita(), nodoInserir);
+		} else {
+			nodoPai.setDireita(nodoInserir);
+		}
+	}
 	
+	public void remove(Nodo<T> removeNodo) {
+		if (!removeNodo.verificaFilhos()) {
+			Nodo<T> nodoPai = removeNodo.getprincipal();
+			removeNodo.setprincipal(null);
+			if (nodoPai.getEsquerda() != null) {
+				if (nodoPai.getEsquerda().compareTo(removeNodo) == 0) {
+					nodoPai.setEsquerda(null);
+				}
+			} else if (nodoPai.getDireita() != null) {
+				if (nodoPai.getDireita().compareTo(removeNodo) == 0) {
+					nodoPai.setDireita(null);
+				}
+			}
+		} else if (removeNodo.getDireita() != null
+				^ removeNodo.getEsquerda() != null) {
+			Nodo<T> nodoPai = removeNodo.getprincipal();
+			removeNodo.setprincipal(null);
+			if (removeNodo.getDireita() != null) {
+				if (nodoPai.getEsquerda() != null) {
+					if (nodoPai.getEsquerda().compareTo(removeNodo) == 0) {
+						nodoPai.setEsquerda(removeNodo.getDireita());
+					}
+				} else if (nodoPai.getDireita() != null) {
+					if (nodoPai.getDireita().compareTo(removeNodo) == 0) {
+						nodoPai.setDireita(removeNodo.getDireita());
+					}
+				}
+			} else if (removeNodo.getEsquerda() != null) {
+				if (nodoPai.getEsquerda() != null) {
+					if (nodoPai.getEsquerda().compareTo(removeNodo) == 0) {
+						nodoPai.setEsquerda(removeNodo.getEsquerda());
+					}
+				} else if (nodoPai.getDireita() != null) {
+					if (nodoPai.getDireita().compareTo(removeNodo) == 0) {
+						nodoPai.setDireita(removeNodo.getEsquerda());
+					}
+				}
+			}
+		} else {
 
+			Nodo<T> nodoAnterior = removeNodo.getEsquerda();
+			removeNodo.setValor(nodoAnterior.getValor());
+			this.remove(nodoAnterior);
+
+		}
+	}
 	
 
 	
