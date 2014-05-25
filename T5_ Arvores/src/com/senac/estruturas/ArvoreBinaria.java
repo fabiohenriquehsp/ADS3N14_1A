@@ -6,12 +6,11 @@ public class ArvoreBinaria<T extends Comparable<T>>
 
 	private Nodo<T> raiz;
 	private int cmp = 0;
-	
-	public ArvoreBinaria()
-	{
+
+	public ArvoreBinaria() {
 		this.raiz = null;
 	}
-	
+
 	public void insert(Nodo<T> novo) {
 
 		if (this.raiz == null) {
@@ -28,17 +27,21 @@ public class ArvoreBinaria<T extends Comparable<T>>
 
 	private void insertNodo(Nodo<T> nodoPrincipal, Nodo<T> nodoInserir) {
 		int result = nodoPrincipal.compareTo(nodoInserir);
+		// # valor menor que zero insere esquerda
 		if (result < 0) {
 			this.insereEsquerda(nodoPrincipal, nodoInserir);
-		} else if (result > 0) {
+		}
+		// # valor maior que zero insere direita
+		else if (result > 0) {
 			this.insereDireita(nodoPrincipal, nodoInserir);
 		} else {
 			nodoPrincipal.setValor(nodoInserir.getValor());
 			this.insereDireita(nodoPrincipal, nodoInserir);
 		}
 	}
-	
+
 	private void insereEsquerda(Nodo<T> nodoPrincipal, Nodo<T> nodoInserir) {
+		// # valor diferente de zero insere
 		if (nodoPrincipal.getEsquerda() != null) {
 			this.insertNodo(nodoPrincipal.getEsquerda(), nodoInserir);
 		} else {
@@ -47,13 +50,14 @@ public class ArvoreBinaria<T extends Comparable<T>>
 	}
 
 	private void insereDireita(Nodo<T> nodoPai, Nodo<T> nodoInserir) {
+		// # valor diferente de zero insere
 		if (nodoPai.getDireita() != null) {
 			this.insertNodo(nodoPai.getDireita(), nodoInserir);
 		} else {
 			nodoPai.setDireita(nodoInserir);
 		}
 	}
-	
+
 	public void remove(Nodo<T> removeNodo) {
 		if (!removeNodo.verificaFilhos()) {
 			Nodo<T> nodoPai = removeNodo.getprincipal();
@@ -100,10 +104,29 @@ public class ArvoreBinaria<T extends Comparable<T>>
 
 		}
 	}
-	
 
-	
+	// # 'nodo' refere-se ao nó-pai, neste caso
+	public Nodo<T> buscar(Nodo no, Nodo valor) {
+		if (no == null) {
+			// # valor não encontrado
+			return null;
+		} else {
+			int no_valor = valor.compareTo(no);
+			if (valor == no)
+				// # valor encontrado
+				return no;
+			else if (no_valor < 0) {
+				// # busca na subárvore esquerda
+				return this.buscar(no.getDireita(), valor);
+			} else if (no_valor > 0) {
+				// # busca na subárvore direita
+				return this.buscar(no.getEsquerda(), valor);
+			} else {
+				return null;
+			}
 
-	
-	
+		}
+
+	}
+
 }
