@@ -20,10 +20,10 @@ public class ListaTelefonica {
 			if (command.equals("avancar"))
 				controller.nextContato();
 			if (command.equals("voltar"))
-				controller.previousContato();
-			/*
+				controller.previousContato();			
 			if (command.equals("inserir"))
 				controller.insertContato();
+			/*
 			if (command.equals("excluir"))
 				controller.removeContato();
 			if (command.equals("procurar"))

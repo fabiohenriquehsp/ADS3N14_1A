@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 import com.senac.apps.ListaTelefonica.model.Pessoa;
@@ -13,7 +14,7 @@ import com.senac.estruturas.ArvoreBinaria;
 import com.senac.estruturas.Nodo;
 
 
-public class ListaController {
+	public class ListaController {
 	private ArvoreBinaria<Pessoa> arquivo;
 	private ArvoreBinaria<Pessoa> contatos;
 	private ListaTelefonicaConsoleView view;
@@ -26,20 +27,20 @@ public class ListaController {
 		this.current = null;
 	}
 
-	public void loadFile(String fileName) {
+	public void loadFile(String filename) {
 		try {
-			
-			String line = "";
-			Scanner arq = new Scanner(new FileReader(fileName));
-			while (arq.hasNext()) {
+			Scanner arq = new Scanner(new FileReader(filename));
+			while(arq.hasNext()) {
 				String name = arq.nextLine();
 				String phone = arq.nextLine();
-				// Linha invocar a classe pessoa
-				// pessoa set(Phone)
+				Pessoa pessoa = new Pessoa(name);
+				pessoa.setTelefone(phone);
+				arquivo.insert(new Nodo<Pessoa>(pessoa));
+				if (!name.startsWith("#"))
+					contatos.insert(new Nodo<Pessoa>(pessoa));
 			}
-
+			current = contatos.getHead();
 		} catch (FileNotFoundException e) {
-			// TODO: handle exception
 			view.logError(e.getMessage());
 		}
 	}
@@ -69,6 +70,26 @@ public class ListaController {
 		}
 	}
 		
+	
+	public void insertContato(Pessoa p) {
+		Nodo<Pessoa> nodo = new Nodo<Pessoa>(p);
+		contatos.insert(nodo);
+		System.out.println("Contatos " + current.getValor() + ".");
+
+	}
+	
+	public void insertContato() {
+		Pessoa contato = new Pessoa();
+		contato.setNome(view.readString("Nome"));
+		contato.setTelefone(view.readString("Telefone"));
+		Nodo<Pessoa> novo = new Nodo<Pessoa>(contato);
+		contatos.insert(novo);
+		arquivo.insert(new Nodo<Pessoa>(contato));
+		current = novo;
+	}
+	
+	
+	
 	public void imprimeArq(String fileName) {
 		try {
 			
@@ -87,4 +108,37 @@ public class ListaController {
 		}
 	}
 
+	
+	public void saveFile(String filename) {
+		FileWriter arq = null;
+		try {
+			arq = new FileWriter(filename,false);
+			Nodo<Pessoa> iter = arquivo.getHead();
+			while (iter != null) {
+				Pessoa contato = iter.getValor();
+				if (contatos.buscar(current, iter) == null) {
+					if (!contato.getNome().startsWith("#"))
+						arq.append("#"+contato.getNome()+"\n");
+					else
+						arq.append(contato.getNome()+"\n");						
+				} else {
+					arq.append(contato.getNome()+"\n");
+				}
+				arq.append(contato.getTelefone()+"\n");
+				iter = iter.getprincipal();
+			}
+		} catch (IOException e) {
+			view.showMessage(e.getMessage());
+		} finally {
+			if (arq != null)
+				try {
+					arq.close();
+				} catch (IOException e) {
+					view.showMessage(e.getMessage());
+				}
+		}
+	}
+	
+	
+	
 }

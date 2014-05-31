@@ -128,5 +128,13 @@ public class ArvoreBinaria<T extends Comparable<T>>
 		}
 
 	}
+	
+	public Nodo<T> getHead() {
+		return this.raiz;
+	}
 
+	public int getComparacoes() {
+		return this.cmp;
+	}
+	
 }
